@@ -1,16 +1,25 @@
 <?php
+// ouverture de la session afin de se connecter en une page
+session_start();
 // le code php pour recuper les informations depuis la base de donnees
-require_once ("connexiondb.php");
-$idfil = isset($_GET['idF']) ? $_GET['idF'] : 0;
-$requet = "SELECT * FROM filiere WHERE  idFiliere=$idfil";
-$resultat = $pdo->query($requet);
-$filiere = $resultat->fetch();//recuperer la valeur de la requette sous forme d'un tableau associatif
-// recuperation de nom et niveau de la filiere
-$nomf = $filiere['nomFiliere'];
-$niveauf = strtolower($filiere['niveau']);
-
-
-
+require_once("connexiondb.php");
+// **************************************************************************************************
+try {
+    //vérification et se retrouver à la page principale du programme si la codition est validée
+    if (isset($_SESSION['user'])) {
+        $idfil = isset($_GET['idF']) ? $_GET['idF'] : 0;
+        $requet = "SELECT * FROM filiere WHERE  idFiliere=$idfil";
+        $resultat = $pdo->query($requet);
+        $filiere = $resultat->fetch(); //recuperer la valeur de la requette sous forme d'un tableau associatif
+        // recuperation de nom et niveau de la filiere
+        $nomf = $filiere['nomFiliere'];
+        $niveauf = strtolower($filiere['niveau']);
+    } else {
+        header('location:login.php');
+    }
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,7 +35,7 @@ $niveauf = strtolower($filiere['niveau']);
 <body>
     <?php
     // appelle de la page menu avec tous les codes
-    include ("menu.php");
+    include("menu.php");
     ?>
     <div class="container">
         <div class="panel panel-primary   marginTop">
@@ -42,8 +51,7 @@ $niveauf = strtolower($filiere['niveau']);
                     </div>
                     <div class="form-group">
                         <label for="niv"> Nom de la filière:</label>
-                        <input id="niv" type="text" name="nomF" placeholder="tapper le nom de votre filiere"
-                            value="<?php echo $nomf; ?>" class="form-control">
+                        <input id="niv" type="text" name="nomF" placeholder="tapper le nom de votre filiere" value="<?php echo $nomf; ?>" class="form-control">
                     </div>
                     <div class="form-group">
                         <label for="niv"> Niveau:</label>

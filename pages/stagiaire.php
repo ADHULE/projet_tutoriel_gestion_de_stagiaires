@@ -1,5 +1,9 @@
 <?php
-require_once ("connexiondb.php");//appelle de la page qui gere la connection à la base de données
+// appelle de la page de gestion de securité des différentes pages
+require_once('identifierSession.php');
+// **************************************************************************************************
+
+require_once("connexiondb.php"); //appelle de la page qui gere la connection à la base de données
 //recuperation de information introduites par l'utilisateur
 $nomPrenom = isset($_GET['nomPrenom']) ? $_GET['nomPrenom'] : "";
 $filiere = isset($_GET['filiere']) ? $_GET['filiere'] : 0;
@@ -44,7 +48,7 @@ if ($reste === 0) {
 
 <body>
     <!-- appelle de la base de la menu -->
-    <?php include ("menu.php"); ?>
+    <?php include("menu.php"); ?>
 
     <div class="container">
         <div class="panel panel-success haut">
@@ -52,8 +56,7 @@ if ($reste === 0) {
             <div class="panel-body">
                 <form method="get" action="stagiaire.php" class="form-inline">
                     <div class="form-group">
-                        <input type="text" name="nomPrenom" id="nomPrenom" placeholder="taper nom de la stagiaire..."
-                            class="form-control" value="<?php $nomPrenom; ?>">
+                        <input type="text" name="nomPrenom" id="nomPrenom" placeholder="taper nom de la stagiaire..." class="form-control" value="<?php $nomPrenom; ?>">
                     </div>
                     <!-- selection toutes les filieres qui se retrouvent dans lq base de données -->
                     <label for="filiere">Filiere </label>
@@ -69,7 +72,10 @@ if ($reste === 0) {
                     <button type="submit" class="btn btn-success">
                         <span class="glyphicon glyphicon-search"></span> Rechercher...</button>
                     &nbsp &nbsp
-                    <a href="nouveauStagiaire.php" class="glyphicon glyphicon-plus">Nouveau stagiaire</a>
+                    <!-- securité de l'opération pour d'autres utilisateurs car seul l'administrateur a le droit -->
+                    <?php if ($_SESSION['user']['role'] == "ADMIN") { ?>
+                        <a href="nouveauStagiaire.php" class="glyphicon glyphicon-plus">Nouveau stagiaire</a>
+                    <?php } ?>
                 </form>
             </div>
         </div>
@@ -85,7 +91,11 @@ if ($reste === 0) {
                             <th>Prenom</th>
                             <th>filiere</th>
                             <th>Photo</th>
-                            <th>Actions</th>
+                            <!-- securité de l'opération pour d'autres utilisateurs car seul l'administrateur a le droit -->
+                            <?php if ($_SESSION['user']['role'] == 'ADMIN') { ?>
+                                <th>Actions</th>
+
+                            <?php } ?>
 
                         </tr>
                     </thead>
@@ -99,19 +109,17 @@ if ($reste === 0) {
                                 <td> <?php echo $stagiaire['nomFiliere'] ?> </td>
                                 <td>
                                     <!-- recuperation et stockage temporere des images -->
-                                    <img src="../images/<?php echo $stagiaire['photo'] ?>" width="50px" ; height="50px" ;
-                                        class="img-circle">
+                                    <img src="../images/<?php echo $stagiaire['photo'] ?>" width="50px" ; height="50px" ; class="img-circle">
                                 </td>
-                                <td>
-                                    <a onclick="return confirm('Voulez vous vraiment modifier cette information?')"
-                                        href="editerStagiaire.php?idF= <?php echo $stagiaire['idStagiaire'] ?>"
-                                        class="glyphicon glyphicon-edit"></a>
-                                    <a onclick="return confirm('Etes vous sur de vouloir supprimer cette information?')"
-                                        href="supprimerStagiaire.php?idF= <?php echo $stagiaire['idStagiaire'] ?>"
-                                        class="glyphicon glyphicon-trash"></a>
-                                </td>
+                                <!-- securité de l'opération pour d'autres utilisateurs car seul l'administrateur a le droit -->
+                                <?php if ($_SESSION['user']['role'] == 'ADMIN') { ?>
+                                    <td>
+                                        <a onclick="return confirm('Voulez vous vraiment modifier cette information?')" href="editerStagiaire.php?idS= <?php echo $stagiaire['idStagiaire'] ?>" class="glyphicon glyphicon-edit"></a>
+                                        <a onclick="return confirm('Etes vous sur de vouloir supprimer cette information?')" href="supprimerStagiaire.php?idS= <?php echo $stagiaire['idStagiaire'] ?>" class="glyphicon glyphicon-trash"></a>
+                                    <?php } ?>
+                                    </td>
+                                <?php } ?>
                             </tr>
-                        <?php } ?>
 
                     </tbody>
                 </table>
@@ -120,9 +128,8 @@ if ($reste === 0) {
                     <ul class="pagination">
                         <?php for ($i = 1; $i < $nbrPage; $i++) { ?>
                             <li class="<?php if ($i == $page)
-                                echo 'active' ?>">
-                                    <a
-                                        href="stagiaire.php?page=<?php echo $i; ?>&nomPrenom=<?php echo $nomPrenom ?>&filiere=<?php echo $filiere ?>">
+                                            echo 'active' ?>">
+                                <a href="stagiaire.php?page=<?php echo $i; ?>&nomPrenom=<?php echo $nomPrenom ?>&filiere=<?php echo $filiere ?>">
                                     <?php echo $i; ?></a>
                             </li>
                         <?php } ?>

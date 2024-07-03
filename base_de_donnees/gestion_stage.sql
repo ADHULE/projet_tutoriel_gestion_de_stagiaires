@@ -49,9 +49,9 @@ INSERT INTO stagiaire(nom,prenom,civilite,photo,idFiliere) VALUES
 
 
 INSERT INTO utilisateur(login,email,role,etat,pwd) VALUES
-('ADMIN','admi@gamil.com','admin',1,md5('1234')),
-('USER1','user1@gamil.com','visiteur',0,md5('1234')),
-('USER2','user2@gamil.com','visiteur',1,md5('1234'));
+('ADMIN','admi@gamil.com','ADMIN',1,md5('1234')),
+('USER1','user1@gamil.com','VISITEUR',0,md5('1234')),
+('USER2','user2@gamil.com','VISITEUR',1,md5('1234'));
 SELECT * FROM filiere;
 SELECT * FROM satagiaire;
 SELECT * FROM utilisateur;
